@@ -8,10 +8,11 @@ from sklearn.linear_model import LogisticRegression
 fake = pd.read_csv("Fake.csv")
 true = pd.read_csv("True.csv")
 
-# Combine WITHOUT label column
+# Add category column
 fake['category'] = "Fake"
 true['category'] = "Real"
 
+# Combine datasets
 data = pd.concat([fake, true])
 
 # Features & target
@@ -23,7 +24,9 @@ vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(X)
 
 # Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2
+)
 
 # Model
 model = LogisticRegression()
@@ -35,7 +38,10 @@ st.title("Fake News Detection App")
 user_input = st.text_area("Enter News Text")
 
 if st.button("Predict"):
-    input_data = vectorizer.transform([user_input])
-    prediction = model.predict(input_data)
+    if user_input.strip() != "":
+        input_data = vectorizer.transform([user_input])
+        prediction = model.predict(input_data)
 
-    st.write("Result:", prediction[0])
+        st.write("Result:", prediction[0])
+    else:
+        st.warning("Please enter news text.")
